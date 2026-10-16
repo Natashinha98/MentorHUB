@@ -1,242 +1,187 @@
-# MentorHub – Componentes de Autenticação, Busca de Mentores, Agendamento e Notificações
+# MentorHub
 
-Implementação em Python de quatro componentes do **MentorHub**, plataforma de mentoria
-(Engenharia de Software, FEI), com uma interface visual para demonstrar como eles se
-comunicam. Os componentes seguem a especificação e a modelagem de componentes do projeto
-(`Especificacao_e_Modelagem_de_Componentes_MentorHub.docx`); o Lab 4 pede em especial
-Agendamento e Notificações (`Especificacao_de_Componentes_Implementacao_MentorHub.docx`).
+Projeto de Engenharia de Software (FEI). O MentorHub é uma plataforma de mentoria onde
+mentorados procuram mentores. Aqui implementamos em Python os componentes de
+**Autenticação** e **Busca de Mentores**, seguindo a especificação que fizemos nos
+documentos da disciplina. Os outros componentes do sistema ainda não foram implementados.
 
 **Equipe:** Natasha Trindade, Douglas Honda e Marcus Vinicius Zelenato.
 
-## Tecnologias
+## Tecnologias utilizadas
 
-- Python 3.10 ou superior (testado com 3.13)
-- `abc` (interfaces), `dataclasses` e `enum` (modelo), `logging` (registro de falhas), biblioteca padrão
-- `pytest` e `pytest-cov` para os testes (únicas dependências, em `requirements.txt`)
+- **Python 3.10 ou mais novo** (testamos com o 3.13)
+- **Biblioteca padrão do Python**: `abc` (para criar as interfaces), `dataclasses` e `enum`
+  (para as classes de dados), `hashlib` (para guardar as senhas com hash), `logging` (para
+  registrar falhas) e `http.server` (servidor da tela)
+- **pytest** e **pytest-cov** para os testes e a cobertura (estão no `requirements.txt`)
+- **HTML, CSS e JavaScript** simples na tela de demonstração, sem nenhum framework
 
-## Estrutura
+## Estrutura dos componentes
+
+Implementamos dois componentes: **Autenticação** e **Busca de Mentores**. Cada um fica na
+sua pasta, com a interface, o componente e os erros dele.
 
 ```
 mentorhub/
 ├── src/mentorhub/
-│   ├── modelos.py                  # Usuario, Sessao, Conta, PerfilMentor, Avaliacao, Foto, ...
-│   ├── textos.py                   # normalização de texto (sem acento, minúsculo)
-│   ├── autenticacao/               # COMPONENTE: Autenticação
-│   │   ├── interfaces.py           #   IAutenticacao (fornecida)
-│   │   ├── componente.py           #   ComponenteAutenticacao
-│   │   └── excecoes.py             #   DadosInvalidos, CredenciaisInvalidas, ...
-│   ├── busca/                      # COMPONENTE: Busca de Mentores
-│   │   ├── interfaces.py           #   IBuscaMentores (fornecida)
-│   │   ├── componente.py           #   ComponenteBuscaMentores
-│   │   └── excecoes.py             #   AreaInvalida, PerfilNaoEncontrado
-│   ├── agendamento/                # COMPONENTE: Agendamento
-│   │   ├── interfaces.py           #   IAgendamento (fornecida)
-│   │   ├── componente.py           #   ComponenteAgendamento
-│   │   └── excecoes.py             #   erros do domínio de agendamento
-│   ├── notificacoes/               # COMPONENTE: Notificações
-│   │   ├── interfaces.py           #   INotificacao (fornecida) e IEmail (requerida)
-│   │   ├── componente.py           #   ComponenteNotificacoes
-│   │   └── excecoes.py             #   EmailInvalido, FalhaEnvioEmail
-│   ├── persistencia/               # APOIO (componente não implementado)
-│   │   ├── interfaces.py           #   IPersistencia
-│   │   └── memoria.py              #   PersistenciaEmMemoria (substituto em memória)
-│   ├── armazenamento/              # APOIO (componente não implementado)
-│   │   ├── interfaces.py           #   IArmazenamentoImagens
-│   │   └── memoria.py              #   ArmazenamentoEmMemoria (substituto em memória)
-│   └── externos/
-│       └── email_simulado.py       # APOIO: EmailSimulado (serviço de e-mail de mentira)
-├── interface_web/                  # INTERFACE VISUAL da demonstração
-│   ├── aplicacao.py                #   monta Autenticação e Busca de Mentores com dados de teste
-│   ├── servidor.py                 #   servidor local (biblioteca padrão)
-│   └── index.html                  #   tela
-├── tests/                          # testes automatizados
-├── docs/evidencias/                # saídas salvas dos testes e da demonstração, e prints da interface
-├── demo.py                         # demonstração no terminal
+│   ├── modelos.py              # classes de dados (Usuario, Conta, PerfilMentor, Avaliacao, ...)
+│   ├── textos.py               # tira acento e deixa o texto minúsculo (usado na busca)
+│   ├── autenticacao/           # COMPONENTE Autenticação
+│   ├── busca/                  # COMPONENTE Busca de Mentores
+│   ├── persistencia/           # APOIO: interface do banco + versão em memória
+│   └── armazenamento/          # APOIO: interface das fotos + versão em memória
+├── interface_web/              # tela de demonstração
+├── tests/                      # testes automatizados
+├── docs/evidencias/            # saída dos testes e prints da tela
+├── demo.py                     # demonstração no terminal
 ├── pytest.ini
 └── requirements.txt
 ```
 
-Os componentes implementados são **Autenticação**, **Busca de Mentores**, **Agendamento** e
-**Notificações** (o Lab 4 cobra Agendamento e Notificações). A **Persistência** e o
-**Armazenamento de Perfil** são outros componentes da arquitetura que não foram
-implementados aqui: só as interfaces `IPersistencia` e `IArmazenamentoImagens` existem,
-cada uma com um substituto em memória para os componentes terem com quem conversar. O
-serviço de e-mail também é externo ao MentorHub e foi simulado (`EmailSimulado`).
+Dentro de cada pasta de componente tem sempre três arquivos:
 
-## Interfaces
+- `interfaces.py`: a interface que o componente oferece (classe abstrata)
+- `componente.py`: a classe que implementa a interface
+- `excecoes.py`: os erros próprios daquele componente
 
-Nos arquivos o código não usa acento (`INotificacao`, `IPersistencia`); no documento de
-especificação os nomes são `INotificação` e `IPersistência`.
+A **Persistência** e o **Armazenamento de imagens** são outros componentes da arquitetura,
+mas não era o nosso foco implementar eles. Por isso criamos só as interfaces
+(`IPersistencia` e `IArmazenamentoImagens`) e uma versão simples que guarda tudo na memória,
+só para os nossos componentes terem com quem conversar.
 
-| Componente | Fornece | Requer |
+## Interfaces e operações implementadas
+
+No código os nomes não têm acento (`IPersistencia`); na documentação aparecem com acento.
+
+| Componente | Interface que fornece | Interfaces que precisa |
 |---|---|---|
 | Autenticação | `IAutenticacao` | `IPersistencia` |
 | Busca de Mentores | `IBuscaMentores` | `IPersistencia`, `IArmazenamentoImagens` |
-| Agendamento | `IAgendamento` | `IPersistencia`, `INotificacao` |
-| Notificações | `INotificacao` | `IEmail` (serviço externo) |
 
-### IAutenticacao (fornecida pela Autenticação)
+### IAutenticacao
 
-| Operação | O que faz | Pré-condição | Erros |
-|---|---|---|---|
-| `validar_cadastro(nome, email, senha, papel) -> ResultadoValidacao` | Confere os dados sem criar nada e lista cada regra desrespeitada | Nenhuma (é consulta) | Não levanta erro: devolve `valido=False` com a lista |
-| `criar_conta(nome, email, senha, papel) -> Usuario` | Cria a conta; a senha fica guardada só como hash com sal (PBKDF2-SHA256) | Dados passam em `validar_cadastro` | `DadosInvalidos` |
-| `autenticar_usuario(email, senha) -> Usuario` | Confere e-mail e senha | Conta existe e senha confere | `CredenciaisInvalidas` (mesma mensagem para e-mail ou senha errados) |
-| `recuperar_acesso(email) -> CodigoRecuperacao` | Gera um código de 6 dígitos, válido por 15 minutos, guardado só como hash | Conta existe | `ContaNaoEncontrada` |
-| `redefinir_senha(email, codigo, nova_senha) -> Usuario` | Termina a recuperação: troca a senha; o código só vale uma vez | Código certo e dentro do prazo; senha nova válida | `CodigoRecuperacaoInvalido`, `DadosInvalidos` |
+| Operação | O que faz | Erros possíveis |
+|---|---|---|
+| `validar_cadastro(nome, email, senha, papel)` | Confere os dados do cadastro e devolve a lista de regras que não foram cumpridas. Não cria nada | (não dá erro, só devolve a lista) |
+| `criar_conta(nome, email, senha, papel)` | Cria a conta. A senha é guardada só como hash | `DadosInvalidos` |
+| `autenticar_usuario(email, senha)` | Faz o login e devolve o usuário | `CredenciaisInvalidas` |
+| `recuperar_acesso(email)` | Gera um código de 6 dígitos que vale 15 minutos | `ContaNaoEncontrada` |
+| `redefinir_senha(email, codigo, nova_senha)` | Troca a senha usando o código | `CodigoRecuperacaoInvalido`, `DadosInvalidos` |
 
-Regras de cadastro: nome com 2 letras ou mais; e-mail com formato válido e ainda não cadastrado; senha
-com 8 caracteres ou mais, com letras e números; papel mentor ou mentorado. A `redefinir_senha` completa o
-fluxo alternativo "esqueci a senha": a especificação lista só "recuperar acesso", e a troca da senha é a
-segunda metade dessa operação. A Autenticação não manda e-mail (não requer `INotificacao` na arquitetura), então
-quem entrega o código ao usuário é de fora do componente.
+Regras do cadastro: nome com pelo menos 2 letras, e-mail válido e ainda não usado, senha com 8
+caracteres ou mais (com letra e número) e papel mentor ou mentorado. No login, o erro é o
+mesmo para e-mail errado ou senha errada, para não dar dica a quem tenta invadir. A
+`redefinir_senha` não estava na lista da especificação, mas sem ela a recuperação de acesso
+não termina, então colocamos como a segunda parte dela.
 
-### IBuscaMentores (fornecida pela Busca de Mentores)
+### IBuscaMentores
 
-| Operação | O que faz | Pré-condição | Erros |
-|---|---|---|---|
-| `pesquisar_mentores(area) -> list[ResumoMentor]` | Lista os mentores com alguma área que contenha o termo (sem diferenciar maiúsculas e acentos), do mais bem avaliado pro menos, com nome, áreas, nota média e foto | Área não vazia | `AreaInvalida` |
-| `consultar_perfil(mentor_id) -> PerfilCompleto` | Resumo, bio e avaliações do mentor | Mentor existe e tem perfil | `PerfilNaoEncontrado` |
+| Operação | O que faz | Erros possíveis |
+|---|---|---|
+| `pesquisar_mentores(area)` | Lista os mentores que atendem naquela área, dos mais bem avaliados para os menos, com nome, áreas, nota e foto | `AreaInvalida` (área vazia) |
+| `consultar_perfil(mentor_id)` | Mostra a bio e as avaliações de um mentor | `PerfilNaoEncontrado` |
 
-Se a foto de um mentor não puder ser carregada, ele continua na lista, só sem foto.
-
-### IAgendamento (fornecida pelo Agendamento)
-
-| Operação | O que faz | Pré-condição | Erros |
-|---|---|---|---|
-| `verificar_disponibilidade(mentor_id, data) -> list[datetime]` | Lista os horários livres do mentor na data, em ordem | Mentor existe | `MentorNaoEncontrado` |
-| `agendar_sessao(mentor_id, mentorado_id, horario) -> Sessao` | Marca a sessão, tira o horário da lista de livres e pede o aviso de confirmação | Horário livre; mentor e mentorado existem | `HorarioIndisponivel`, `MentorNaoEncontrado`, `MentoradoNaoEncontrado` |
-| `cancelar_sessao(sessao_id) -> Sessao` | Cancela, devolve o horário à agenda e pede o aviso de cancelamento | Sessão existe, está marcada e ainda não aconteceu | `SessaoNaoEncontrada`, `CancelamentoNaoPermitido` |
-
-### INotificacao (fornecida pelas Notificações)
-
-| Operação | O que faz | Pré-condição | Saída |
-|---|---|---|---|
-| `enviar_notificacao_confirmacao(sessao_id, email_mentor, email_mentorado, data_hora)` | Envia e-mail de confirmação aos dois | E-mails válidos (senão `EmailInvalido`, e nada é enviado) | `ResultadoEnvio(enviado, falhas)` |
-| `enviar_notificacao_cancelamento(sessao_id, email_mentor, email_mentorado, data_hora)` | Envia e-mail de cancelamento aos dois | Idem | `ResultadoEnvio(enviado, falhas)` |
+A pesquisa não diferencia maiúscula de minúscula nem acento (buscar "dados" ou "DADOS" dá o
+mesmo resultado). Se a foto de um mentor não carregar, ele continua na lista, só sem foto.
 
 ### Interfaces de apoio
 
-- `IPersistencia`: `buscar_usuario`, `listar_horarios_livres`, `ocupar_horario`, `liberar_horario`, `salvar_sessao`, `buscar_sessao` (Agendamento); `salvar_conta`, `buscar_conta_por_email` (Autenticação); `salvar_perfil_mentor`, `buscar_perfil_mentor`, `listar_perfis_por_area`, `salvar_avaliacao`, `listar_avaliacoes` (Busca de Mentores). O `ocupar_horario` confere e reserva de uma vez só, por isso dois agendamentos do mesmo horário nunca dão certo ao mesmo tempo.
-- `IArmazenamentoImagens`: `salvar_foto(usuario_id, foto)` e `recuperar_foto(usuario_id)`.
-- `IEmail`: `enviar(destinatario, assunto, corpo)`, que levanta `FalhaEnvioEmail` se o envio não for possível.
+- `IPersistencia`: guarda e busca usuários, contas, perfis de mentores e avaliações
+- `IArmazenamentoImagens`: `salvar_foto` e `recuperar_foto`
 
-Os contratos completos (entradas, saída, pré e pós-condições) estão nas docstrings de
-cada interface, em `interfaces.py`.
+O contrato completo de cada operação (entradas, saída, pré e pós-condição) está escrito nas
+docstrings dos arquivos `interfaces.py`.
 
-## Como os componentes se comunicam
+## Como ocorre a comunicação entre os componentes
 
 ```
- interface web / demo.py / testes
+ quem usa (tela, demo.py ou testes)
       │
-      ├──► IAutenticacao ─── ComponenteAutenticacao ───► IPersistencia
-      ├──► IBuscaMentores ── ComponenteBuscaMentores ──► IPersistencia
-      │                                         └──────► IArmazenamentoImagens
-      └──► IAgendamento ──── ComponenteAgendamento ────► IPersistencia
-                                         └──────► INotificacao
-                                                    ComponenteNotificacoes ──► IEmail
-
- IPersistencia  ◄── PersistenciaEmMemoria      IArmazenamentoImagens ◄── ArmazenamentoEmMemoria
- IEmail         ◄── EmailSimulado
+      ├──► IAutenticacao ──► Autenticação ──────► IPersistencia
+      └──► IBuscaMentores ─► Busca de Mentores ─► IPersistencia
+                                           └────► IArmazenamentoImagens
 ```
 
-- Cada componente recebe o que precisa **pelo construtor** (injeção de dependência):
-  `ComponenteAgendamento(persistencia, notificacao)`, `ComponenteNotificacoes(email)`,
-  `ComponenteAutenticacao(persistencia)` e `ComponenteBuscaMentores(persistencia, imagens)`.
-- O Agendamento só conhece a interface `INotificacao`. Ele não importa a classe
-  `ComponenteNotificacoes`. Quem liga as peças é o `demo.py` (ou os testes, ou a interface web).
-  Os quatro componentes são desacoplados desse jeito.
-  Isso é conferido por um teste automatizado (`test_componente_nao_importa_a_implementacao_do_outro`).
-- Autenticação, Busca de Mentores e Agendamento não se chamam entre si: eles se encontram
-  nos mesmos dados, pela `IPersistencia`. Uma conta criada pela Autenticação já é
-  reconhecida pelo Agendamento (o `buscar_usuario` enxerga as contas).
-- Depois de agendar ou cancelar, o Agendamento busca os e-mails do mentor e do
-  mentorado na persistência e chama `INotificacao`.
-- **Regra de erro:** uma falha na notificação nunca desfaz o agendamento ou o
-  cancelamento, só é registrada no log. Já um e-mail mal formado é erro de
-  pré-condição (`EmailInvalido`), enquanto uma falha de transporte do e-mail volta como
-  `ResultadoEnvio(enviado=False)`.
+- Os componentes **só conversam por interfaces**. Por exemplo, a Busca de Mentores chama
+  `IPersistencia` e nunca importa a classe `PersistenciaEmMemoria`. Com isso dá para
+  trocar uma peça por outra (como o banco real no lugar do banco em memória) sem mexer no resto.
+  Um teste automatizado confere isso.
+- Cada componente recebe o que precisa **pelo construtor**, e quem junta tudo é o `demo.py`, os
+  testes ou a tela. Exemplo: `ComponenteBuscaMentores(persistencia, imagens)`.
+- Autenticação e Busca **não chamam um ao outro**. Eles se encontram nos mesmos dados, pela
+  `IPersistencia`: uma conta de mentor criada na Autenticação, junto com o perfil dele, já
+  aparece na Busca.
+- Se a foto de um mentor não puder ser carregada, a Busca não quebra: o mentor aparece sem
+  foto e o problema vai para o log.
+- Quem controla "quem está logado" é a tela, porque os componentes não guardam sessão.
 
-## Como executar
+## Instruções para execução
+
+Precisa ter o Python 3.10 ou mais novo instalado. Pelo terminal, dentro da pasta do projeto:
 
 ```bash
-# 1. (opcional) ambiente virtual
+# 1. (opcional) criar um ambiente virtual
 python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
+source .venv/bin/activate        # no Windows: .venv\Scripts\activate
 
-# 2. dependências
+# 2. instalar as dependências (pytest e pytest-cov)
 pip install -r requirements.txt
 
-# 3. demonstração no terminal
+# 3. rodar a demonstração no terminal
 python demo.py
 
-# 4. demonstração visual (abre http://localhost:8000 no navegador)
+# 4. abrir a tela de demonstração em http://localhost:8000
 python interface_web/servidor.py
 
-# 5. testes
+# 5. rodar os testes
 python -m pytest -v
 
-# 6. testes com cobertura
+# 6. rodar os testes com cobertura
 python -m pytest --cov=mentorhub --cov-report=term-missing
 ```
 
-Se a porta 8000 estiver ocupada: `python interface_web/servidor.py --porta 8080`.
+- Se a porta 8000 estiver ocupada: `python interface_web/servidor.py --porta 8080`
+- Para parar o servidor, é só apertar `Ctrl+C` no terminal
+- Contas de teste da tela (senha de todas: `senha1234`): `ana@mentorhub.com` (mentora),
+  `bruno@mentorhub.com` e `carla@mentorhub.com` (mentorados)
+- Não precisa instalar o projeto: o `pytest.ini` já configura o caminho
 
-O `pytest.ini` já configura o `pythonpath`, então não precisa instalar o pacote.
+## Testes realizados
 
-## Testes
-
-São 149 testes, com **99% de cobertura** dos componentes (a única linha de fora é o `print` do e-mail simulado,
-que só roda no `demo.py`). A saída completa está em `docs/evidencias/resultado_testes.txt`, e a da demonstração
-em `docs/evidencias/demo.txt`.
+Fizemos **87 testes automatizados**, com **99% de cobertura** do código dos componentes. A saída
+dos testes está em `docs/evidencias/resultado_testes.txt`.
 
 | Arquivo | O que testa |
 |---|---|
-| `tests/test_agendamento.py` | Agendamento isolado (notificação trocada por uma espiã): cada operação com caso normal, pré-condições violadas e pós-condições. Inclui horário duplicado, sessão já cancelada, sessão que já aconteceu e falha de aviso sem desfazer a operação |
-| `tests/test_notificacoes.py` | Notificações isoladas (e-mail simulado): conteúdo dos e-mails, e-mails inválidos (parametrizado), serviço fora do ar, falha com um só destinatário |
-| `tests/test_integracao.py` | Os componentes de verdade conversando (inclusive o caminho login → busca → perfil → agendamento): agendar gera e-mails reais no `EmailSimulado`, fluxo completo verificar → agendar → cancelar, erros de e-mail que não desfazem a sessão, e a checagem de que um componente não importa a implementação do outro |
-| `tests/test_autenticacao.py` | Autenticação isolada: cada regra de cadastro, hash de senha (nunca em texto, sal diferente por conta), login (mesma mensagem para e-mail ou senha errados) e recuperação de acesso (código de uso único, vencido, substituído) |
-| `tests/test_busca_mentores.py` | Busca isolada: pesquisa sem acento e sem diferenciar maiúsculas, ordenação por nota, área vazia, perfil e avaliações, e mentor que continua na lista mesmo com falha na foto |
-| `tests/test_armazenamento_memoria.py`, `tests/test_persistencia_memoria.py` | Os substitutos em memória se comportam como as interfaces prometem |
-| `tests/test_interface_web.py` | A camada da interface visual: login, cadastro, busca, perfil, recuperação de senha e o servidor HTTP |
+| `test_autenticacao.py` | Cada regra do cadastro, se a senha nunca fica guardada em texto, login certo e errado, e a recuperação de acesso (código vencido, já usado ou substituído por outro) |
+| `test_busca_mentores.py` | Pesquisa sem acento e sem diferenciar maiúscula, ordem por nota, área vazia, perfil com avaliações e mentor que continua na lista mesmo com a foto falhando |
+| `test_integracao.py` | Os dois componentes de verdade juntos (criar conta → entrar → pesquisar → ver perfil) e um teste que confere que um componente não importa a implementação do outro |
+| `test_persistencia_memoria.py` e `test_armazenamento_memoria.py` | Se as versões em memória se comportam como as interfaces prometem |
+| `test_interface_web.py` | A camada da tela: login, cadastro, busca, perfil, recuperação de senha e o servidor |
 
-## Cenário da demonstração (`demo.py`)
+Os testes dos componentes são feitos primeiro **isolados** (cada um com o banco em memória) e
+depois **integrados** (os dois juntos).
 
-1. Verifica os horários livres de uma mentora
-2. Agenda uma sessão (e-mails de confirmação aparecem na tela)
-3. Tenta agendar o mesmo horário e é recusado
-4. Cancela a sessão (e-mails de cancelamento) e o horário volta à lista
-5. Tenta cancelar de novo e é recusado
-6. Deixa o serviço de e-mail fora do ar: o agendamento continua valendo, com aviso no log
+## Demonstração
 
-## Interface visual
+**No terminal (`demo.py`)**:
 
-`python interface_web/servidor.py` sobe uma tela com os dois componentes de entrada do sistema:
-**Autenticação** e **Busca de Mentores**. Ela não reimplementa nada: chama os mesmos componentes do
-projeto pelas interfaces `IAutenticacao` e `IBuscaMentores`.
+1. valida um cadastro com dados ruins e mostra a lista de erros
+2. cria a conta de um mentorado e faz o login
+3. tenta entrar com a senha errada e é recusado
+4. recupera o acesso e troca a senha
+5. pesquisa mentores de Python
+6. abre o perfil de um mentor, com as avaliações
+7. pesquisa com a área vazia e é recusado
 
-**1. Conta** (Autenticação)
-- **Entrar:** botões de "contas de teste" preenchem o formulário (senha `senha1234`).
-- **Criar conta:** a tela chama `validar_cadastro` e depois `criar_conta`. Dados ruins mostram a lista de regras desrespeitadas. Quem se cadastra como mentor informa áreas e bio e já aparece na busca.
-- **Esqueci a senha:** `recuperar_acesso` gera o código (mostrado na tela, já que não há e-mail de verdade) e `redefinir_senha` troca a senha.
+**Na tela (`interface_web`)**: entrar, criar conta, esqueci a senha, pesquisar por área e ver
+o perfil do mentor. Prints em `docs/evidencias/interface_*.png`.
 
-**2. Buscar mentores** (Busca de Mentores)
-- Pesquisa por área, com atalhos. Cada resultado traz foto, áreas, nota média e total de avaliações; **Ver perfil** mostra bio e avaliações.
+## Limitações
 
-A busca só funciona com alguém logado. Essa regra, e o "quem está logado", ficam na camada da
-interface (`interface_web/aplicacao.py`), porque os componentes não têm o conceito de usuário logado.
-
-Os componentes de Agendamento e Notificações continuam no projeto e podem ser vistos pelo
-`demo.py` e pelos testes.
-
-Prints em `docs/evidencias/interface_*.png`.
-
-## Limitações conhecidas
-
-- A persistência é em memória: os dados somem quando o programa termina.
-- O cadastro de horários livres (`cadastrar_horario_livre`), de perfis e de avaliações de mentores
-  fica fora das operações especificadas. Na demonstração, esses dados vêm de uma carga inicial
-  (e, no cadastro de um mentor novo, de um passo de apoio da interface).
-- A Autenticação não mantém sessão de login nem token: confere as credenciais e devolve o usuário.
-  A interface web guarda quem está logado (um usuário por vez, por ser uma demonstração local).
-- O envio de e-mail é simulado; não sai nenhum e-mail de verdade.
+- Os dados ficam só na memória e somem quando o programa fecha
+- Os perfis e avaliações dos mentores vêm de uma carga inicial de teste, porque cadastrar isso
+  não faz parte das operações da especificação
+- A Autenticação não guarda sessão de login: ela só confere a senha. Quem guarda "quem está
+  logado" é a tela, e só um usuário por vez (é uma demonstração local)
+- Não sai e-mail de verdade: o código de recuperação aparece na tela
