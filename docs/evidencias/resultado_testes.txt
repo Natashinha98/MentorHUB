@@ -1,0 +1,196 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /usr/bin/python
+cachedir: .pytest_cache
+rootdir: /home/claude/mentorhub
+configfile: pytest.ini
+testpaths: tests
+plugins: anyio-4.15.1, cov-7.1.0
+collecting ... collected 149 items
+
+tests/test_agendamento.py::test_componente_implementa_a_interface_fornecida PASSED [  0%]
+tests/test_agendamento.py::test_interface_nao_pode_ser_instanciada PASSED [  1%]
+tests/test_agendamento.py::test_lista_os_horarios_livres_da_data_em_ordem PASSED [  2%]
+tests/test_agendamento.py::test_nao_mostra_horarios_de_outra_data PASSED [  2%]
+tests/test_agendamento.py::test_data_sem_horarios_devolve_lista_vazia PASSED [  3%]
+tests/test_agendamento.py::test_mentor_inexistente_levanta_erro PASSED   [  4%]
+tests/test_agendamento.py::test_id_de_mentorado_nao_vale_como_mentor PASSED [  4%]
+tests/test_agendamento.py::test_consulta_nao_altera_nada PASSED          [  5%]
+tests/test_agendamento.py::test_agendar_cria_sessao_marcada PASSED       [  6%]
+tests/test_agendamento.py::test_horario_agendado_deixa_de_ficar_livre PASSED [  6%]
+tests/test_agendamento.py::test_agendar_pede_notificacao_de_confirmacao_com_os_dados_certos PASSED [  7%]
+tests/test_agendamento.py::test_horario_ja_agendado_levanta_erro PASSED  [  8%]
+tests/test_agendamento.py::test_horario_que_nao_esta_na_agenda_levanta_erro PASSED [  8%]
+tests/test_agendamento.py::test_horario_indisponivel_nao_pede_notificacao PASSED [  9%]
+tests/test_agendamento.py::test_mentor_inexistente_ao_agendar PASSED     [ 10%]
+tests/test_agendamento.py::test_mentorado_inexistente_ao_agendar_nao_consome_o_horario PASSED [ 10%]
+tests/test_agendamento.py::test_id_de_mentor_nao_vale_como_mentorado PASSED [ 11%]
+tests/test_agendamento.py::test_todos_os_erros_do_agendamento_tem_a_mesma_base PASSED [ 12%]
+tests/test_agendamento.py::test_falha_no_aviso_nao_desfaz_o_agendamento PASSED [ 12%]
+tests/test_agendamento.py::test_aviso_nao_entregue_nao_desfaz_o_agendamento PASSED [ 13%]
+tests/test_agendamento.py::test_horario_volta_a_ficar_livre_se_a_sessao_nao_puder_ser_salva PASSED [ 14%]
+tests/test_agendamento.py::test_cancelar_muda_o_status_e_devolve_a_sessao PASSED [ 14%]
+tests/test_agendamento.py::test_horario_volta_a_ficar_livre_depois_de_cancelar PASSED [ 15%]
+tests/test_agendamento.py::test_cancelar_pede_notificacao_de_cancelamento PASSED [ 16%]
+tests/test_agendamento.py::test_cancelar_sessao_inexistente_levanta_erro PASSED [ 16%]
+tests/test_agendamento.py::test_cancelar_duas_vezes_levanta_erro_e_avisa_so_uma_vez PASSED [ 17%]
+tests/test_agendamento.py::test_nao_cancela_sessao_que_ja_aconteceu PASSED [ 18%]
+tests/test_agendamento.py::test_falha_no_aviso_nao_desfaz_o_cancelamento PASSED [ 18%]
+tests/test_agendamento.py::test_sem_relogio_informado_usa_a_hora_de_verdade PASSED [ 19%]
+tests/test_agendamento.py::test_sem_dados_dos_usuarios_o_aviso_e_pulado_mas_a_sessao_fica PASSED [ 20%]
+tests/test_armazenamento_memoria.py::test_implementa_a_interface PASSED  [ 20%]
+tests/test_armazenamento_memoria.py::test_salvar_e_recuperar PASSED      [ 21%]
+tests/test_armazenamento_memoria.py::test_foto_nova_troca_a_anterior PASSED [ 22%]
+tests/test_armazenamento_memoria.py::test_usuario_sem_foto_devolve_none PASSED [ 22%]
+tests/test_armazenamento_memoria.py::test_foto_invalida_e_recusada_e_nada_e_guardado[foto0] PASSED [ 23%]
+tests/test_armazenamento_memoria.py::test_foto_invalida_e_recusada_e_nada_e_guardado[foto1] PASSED [ 24%]
+tests/test_armazenamento_memoria.py::test_foto_invalida_e_recusada_e_nada_e_guardado[foto2] PASSED [ 24%]
+tests/test_autenticacao.py::test_implementa_a_interface_fornecida PASSED [ 25%]
+tests/test_autenticacao.py::test_dados_corretos_sao_validos PASSED       [ 26%]
+tests/test_autenticacao.py::test_cada_regra_violada_aparece_nos_erros[B-bruno@mentorhub.com-senha1234-mentorado-nome] PASSED [ 26%]
+tests/test_autenticacao.py::test_cada_regra_violada_aparece_nos_erros[   -bruno@mentorhub.com-senha1234-mentorado-nome] PASSED [ 27%]
+tests/test_autenticacao.py::test_cada_regra_violada_aparece_nos_erros[Bruno-sem-arroba-senha1234-mentorado-e-mail] PASSED [ 28%]
+tests/test_autenticacao.py::test_cada_regra_violada_aparece_nos_erros[Bruno-a@b-senha1234-mentorado-e-mail] PASSED [ 28%]
+tests/test_autenticacao.py::test_cada_regra_violada_aparece_nos_erros[Bruno-bruno@mentorhub.com-curta1-mentorado-8 caracteres] PASSED [ 29%]
+tests/test_autenticacao.py::test_cada_regra_violada_aparece_nos_erros[Bruno-bruno@mentorhub.com-somenteletras-mentorado-letras e n\xfameros] PASSED [ 30%]
+tests/test_autenticacao.py::test_cada_regra_violada_aparece_nos_erros[Bruno-bruno@mentorhub.com-123456789-mentorado-letras e n\xfameros] PASSED [ 30%]
+tests/test_autenticacao.py::test_cada_regra_violada_aparece_nos_erros[Bruno-bruno@mentorhub.com-senha1234-administrador-papel] PASSED [ 31%]
+tests/test_autenticacao.py::test_varios_erros_sao_devolvidos_de_uma_vez PASSED [ 32%]
+tests/test_autenticacao.py::test_email_ja_cadastrado_e_recusado_sem_diferenciar_maiusculas PASSED [ 32%]
+tests/test_autenticacao.py::test_validar_nao_cria_conta PASSED           [ 33%]
+tests/test_autenticacao.py::test_criar_conta_devolve_o_usuario_e_salva PASSED [ 34%]
+tests/test_autenticacao.py::test_a_senha_nao_fica_guardada_em_texto PASSED [ 34%]
+tests/test_autenticacao.py::test_duas_contas_com_a_mesma_senha_tem_hashes_diferentes PASSED [ 35%]
+tests/test_autenticacao.py::test_criar_conta_com_dados_invalidos_levanta_erro_e_nao_salva PASSED [ 36%]
+tests/test_autenticacao.py::test_nao_cria_duas_contas_com_o_mesmo_email PASSED [ 36%]
+tests/test_autenticacao.py::test_todos_os_erros_tem_a_mesma_base PASSED  [ 37%]
+tests/test_autenticacao.py::test_login_correto_devolve_o_usuario PASSED  [ 38%]
+tests/test_autenticacao.py::test_login_ignora_maiusculas_e_espacos_no_email PASSED [ 38%]
+tests/test_autenticacao.py::test_senha_errada_e_email_inexistente_dao_a_mesma_mensagem PASSED [ 39%]
+tests/test_autenticacao.py::test_senha_diferenciando_maiusculas PASSED   [ 40%]
+tests/test_autenticacao.py::test_recuperar_acesso_devolve_codigo_de_6_digitos_com_prazo PASSED [ 40%]
+tests/test_autenticacao.py::test_so_o_hash_do_codigo_fica_guardado PASSED [ 41%]
+tests/test_autenticacao.py::test_recuperar_acesso_de_email_sem_conta_levanta_erro PASSED [ 42%]
+tests/test_autenticacao.py::test_redefinir_senha_troca_a_senha PASSED    [ 42%]
+tests/test_autenticacao.py::test_codigo_so_pode_ser_usado_uma_vez PASSED [ 43%]
+tests/test_autenticacao.py::test_codigo_errado_nao_troca_a_senha PASSED  [ 44%]
+tests/test_autenticacao.py::test_codigo_vencido_e_recusado PASSED        [ 44%]
+tests/test_autenticacao.py::test_codigo_novo_invalida_o_anterior PASSED  [ 45%]
+tests/test_autenticacao.py::test_redefinir_sem_pedir_recuperacao_levanta_erro PASSED [ 46%]
+tests/test_autenticacao.py::test_nova_senha_fraca_e_recusada_e_o_codigo_continua_valendo PASSED [ 46%]
+tests/test_busca_mentores.py::test_implementa_a_interface_fornecida PASSED [ 47%]
+tests/test_busca_mentores.py::test_pesquisa_devolve_os_mentores_da_area PASSED [ 48%]
+tests/test_busca_mentores.py::test_resultado_vem_do_mais_bem_avaliado_pro_menos PASSED [ 48%]
+tests/test_busca_mentores.py::test_pesquisa_ignora_maiusculas_acentos_e_aceita_parte_do_nome_da_area PASSED [ 49%]
+tests/test_busca_mentores.py::test_area_sem_mentores_devolve_lista_vazia PASSED [ 50%]
+tests/test_busca_mentores.py::test_area_vazia_levanta_erro[] PASSED      [ 51%]
+tests/test_busca_mentores.py::test_area_vazia_levanta_erro[   ] PASSED   [ 51%]
+tests/test_busca_mentores.py::test_area_vazia_levanta_erro[None] PASSED  [ 52%]
+tests/test_busca_mentores.py::test_resumo_traz_nome_areas_nota_total_e_foto PASSED [ 53%]
+tests/test_busca_mentores.py::test_mentor_sem_avaliacao_tem_nota_zero_e_sem_foto PASSED [ 53%]
+tests/test_busca_mentores.py::test_nota_media_e_arredondada_em_uma_casa PASSED [ 54%]
+tests/test_busca_mentores.py::test_pesquisar_nao_altera_nada PASSED      [ 55%]
+tests/test_busca_mentores.py::test_falha_na_foto_nao_tira_o_mentor_da_lista PASSED [ 55%]
+tests/test_busca_mentores.py::test_perfil_sem_usuario_correspondente_e_ignorado PASSED [ 56%]
+tests/test_busca_mentores.py::test_perfil_traz_resumo_bio_e_avaliacoes PASSED [ 57%]
+tests/test_busca_mentores.py::test_perfil_de_mentor_sem_avaliacoes_vem_com_lista_vazia PASSED [ 57%]
+tests/test_busca_mentores.py::test_mentor_inexistente_ou_mentorado_levanta_erro[nao-existe] PASSED [ 58%]
+tests/test_busca_mentores.py::test_mentor_inexistente_ou_mentorado_levanta_erro[a1] PASSED [ 59%]
+tests/test_busca_mentores.py::test_erros_da_busca_tem_a_mesma_base PASSED [ 59%]
+tests/test_integracao.py::test_agendar_dispara_email_de_confirmacao_pro_mentor_e_pro_mentorado PASSED [ 60%]
+tests/test_integracao.py::test_cancelar_dispara_email_de_cancelamento_pro_mentor_e_pro_mentorado PASSED [ 61%]
+tests/test_integracao.py::test_fluxo_completo_verificar_agendar_cancelar PASSED [ 61%]
+tests/test_integracao.py::test_dois_agendamentos_do_mesmo_horario_so_o_primeiro_funciona PASSED [ 62%]
+tests/test_integracao.py::test_servico_de_email_fora_do_ar_nao_desfaz_o_agendamento PASSED [ 63%]
+tests/test_integracao.py::test_email_invalido_no_cadastro_do_mentor_nao_desfaz_o_agendamento PASSED [ 63%]
+tests/test_integracao.py::test_cancelamento_com_email_fora_do_ar_nao_desfaz_o_cancelamento PASSED [ 64%]
+tests/test_integracao.py::test_componente_nao_importa_a_implementacao_do_outro[mentorhub.agendamento.componente-proibidos0] PASSED [ 65%]
+tests/test_integracao.py::test_componente_nao_importa_a_implementacao_do_outro[mentorhub.notificacoes.componente-proibidos1] PASSED [ 65%]
+tests/test_integracao.py::test_componente_nao_importa_a_implementacao_do_outro[mentorhub.autenticacao.componente-proibidos2] PASSED [ 66%]
+tests/test_integracao.py::test_componente_nao_importa_a_implementacao_do_outro[mentorhub.busca.componente-proibidos3] PASSED [ 67%]
+tests/test_integracao.py::test_usuario_criado_na_autenticacao_consegue_agendar PASSED [ 67%]
+tests/test_integracao.py::test_fluxo_login_busca_perfil_e_agendamento PASSED [ 68%]
+tests/test_interface_web.py::test_estado_inicial_sem_ninguem_logado_e_com_contas_de_teste PASSED [ 69%]
+tests/test_interface_web.py::test_servidor_http_responde_pagina_e_api PASSED [ 69%]
+tests/test_interface_web.py::test_login_correto_mostra_o_usuario PASSED  [ 70%]
+tests/test_interface_web.py::test_login_com_senha_errada_nao_loga PASSED [ 71%]
+tests/test_interface_web.py::test_cadastro_com_dados_ruins_devolve_a_lista_de_erros PASSED [ 71%]
+tests/test_interface_web.py::test_cadastro_com_papel_invalido_e_recusado PASSED [ 72%]
+tests/test_interface_web.py::test_cadastro_valido_cria_conta_e_permite_entrar PASSED [ 73%]
+tests/test_interface_web.py::test_mentor_novo_aparece_na_busca PASSED    [ 73%]
+tests/test_interface_web.py::test_mentor_novo_sem_areas_cai_em_geral PASSED [ 74%]
+tests/test_interface_web.py::test_recuperacao_de_senha_completa PASSED   [ 75%]
+tests/test_interface_web.py::test_redefinir_com_codigo_errado_falha PASSED [ 75%]
+tests/test_interface_web.py::test_recuperar_acesso_de_email_desconhecido PASSED [ 76%]
+tests/test_interface_web.py::test_busca_e_perfil_exigem_login PASSED     [ 77%]
+tests/test_interface_web.py::test_busca_devolve_resultados_ordenados_com_foto PASSED [ 77%]
+tests/test_interface_web.py::test_busca_com_area_vazia_devolve_erro_de_dominio PASSED [ 78%]
+tests/test_interface_web.py::test_perfil_traz_bio_e_avaliacoes PASSED    [ 79%]
+tests/test_interface_web.py::test_sair_e_reiniciar_deslogam PASSED       [ 79%]
+tests/test_notificacoes.py::test_componente_implementa_a_interface_fornecida PASSED [ 80%]
+tests/test_notificacoes.py::test_interfaces_nao_podem_ser_instanciadas PASSED [ 81%]
+tests/test_notificacoes.py::test_confirmacao_envia_para_o_mentor_e_para_o_mentorado PASSED [ 81%]
+tests/test_notificacoes.py::test_confirmacao_tem_codigo_data_e_hora_da_sessao PASSED [ 82%]
+tests/test_notificacoes.py::test_confirmacao_com_email_do_mentor_invalido_levanta_erro_e_nao_envia[] PASSED [ 83%]
+tests/test_notificacoes.py::test_confirmacao_com_email_do_mentor_invalido_levanta_erro_e_nao_envia[sem-arroba] PASSED [ 83%]
+tests/test_notificacoes.py::test_confirmacao_com_email_do_mentor_invalido_levanta_erro_e_nao_envia[a@b] PASSED [ 84%]
+tests/test_notificacoes.py::test_confirmacao_com_email_do_mentor_invalido_levanta_erro_e_nao_envia[a b@c.com] PASSED [ 85%]
+tests/test_notificacoes.py::test_confirmacao_com_email_do_mentor_invalido_levanta_erro_e_nao_envia[None] PASSED [ 85%]
+tests/test_notificacoes.py::test_confirmacao_com_email_do_mentorado_invalido_nao_envia_nem_pro_mentor[] PASSED [ 86%]
+tests/test_notificacoes.py::test_confirmacao_com_email_do_mentorado_invalido_nao_envia_nem_pro_mentor[sem-arroba] PASSED [ 87%]
+tests/test_notificacoes.py::test_confirmacao_com_email_do_mentorado_invalido_nao_envia_nem_pro_mentor[a@b] PASSED [ 87%]
+tests/test_notificacoes.py::test_confirmacao_com_email_do_mentorado_invalido_nao_envia_nem_pro_mentor[a b@c.com] PASSED [ 88%]
+tests/test_notificacoes.py::test_confirmacao_com_email_do_mentorado_invalido_nao_envia_nem_pro_mentor[None] PASSED [ 89%]
+tests/test_notificacoes.py::test_cancelamento_envia_para_o_mentor_e_para_o_mentorado PASSED [ 89%]
+tests/test_notificacoes.py::test_cancelamento_diz_que_a_sessao_foi_cancelada PASSED [ 90%]
+tests/test_notificacoes.py::test_cancelamento_com_email_invalido_levanta_erro_e_nao_envia PASSED [ 91%]
+tests/test_notificacoes.py::test_servico_de_email_fora_do_ar_devolve_falhou PASSED [ 91%]
+tests/test_notificacoes.py::test_falha_com_um_destinatario_nao_impede_o_aviso_do_outro PASSED [ 92%]
+tests/test_persistencia_memoria.py::test_implementa_a_interface PASSED   [ 93%]
+tests/test_persistencia_memoria.py::test_buscar_usuario_inexistente_devolve_none PASSED [ 93%]
+tests/test_persistencia_memoria.py::test_listar_filtra_por_data_e_ordena PASSED [ 94%]
+tests/test_persistencia_memoria.py::test_ocupar_horario_so_funciona_uma_vez PASSED [ 95%]
+tests/test_persistencia_memoria.py::test_liberar_horario_devolve_pra_lista PASSED [ 95%]
+tests/test_persistencia_memoria.py::test_salvar_sessao_guarda_uma_copia PASSED [ 96%]
+tests/test_persistencia_memoria.py::test_salvar_conta_tambem_deixa_o_usuario_disponivel PASSED [ 97%]
+tests/test_persistencia_memoria.py::test_buscar_conta_por_email_ignora_maiusculas_e_espacos PASSED [ 97%]
+tests/test_persistencia_memoria.py::test_salvar_conta_de_novo_atualiza PASSED [ 98%]
+tests/test_persistencia_memoria.py::test_perfis_filtrados_por_area_sem_acento_nem_maiuscula PASSED [ 99%]
+tests/test_persistencia_memoria.py::test_avaliacoes_ficam_na_ordem_em_que_foram_salvas PASSED [100%]
+
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.13.16-final-0 _______________
+
+Name                                        Stmts   Miss  Cover   Missing
+-------------------------------------------------------------------------
+interface_web/aplicacao.py                    131      5    96%   54-62, 80
+interface_web/servidor.py                      59     15    75%   71, 77-90, 94
+src/mentorhub/__init__.py                       0      0   100%
+src/mentorhub/agendamento/__init__.py           0      0   100%
+src/mentorhub/agendamento/componente.py        69      0   100%
+src/mentorhub/agendamento/excecoes.py           7      0   100%
+src/mentorhub/agendamento/interfaces.py        11      0   100%
+src/mentorhub/armazenamento/__init__.py         0      0   100%
+src/mentorhub/armazenamento/interfaces.py      10      0   100%
+src/mentorhub/armazenamento/memoria.py         16      0   100%
+src/mentorhub/autenticacao/__init__.py          0      0   100%
+src/mentorhub/autenticacao/componente.py       84      1    99%   127
+src/mentorhub/autenticacao/excecoes.py         11      0   100%
+src/mentorhub/autenticacao/interfaces.py       14      0   100%
+src/mentorhub/busca/__init__.py                 0      0   100%
+src/mentorhub/busca/componente.py              43      0   100%
+src/mentorhub/busca/excecoes.py                 4      0   100%
+src/mentorhub/busca/interfaces.py               8      0   100%
+src/mentorhub/externos/__init__.py              0      0   100%
+src/mentorhub/externos/email_simulado.py       22      1    95%   41
+src/mentorhub/modelos.py                       73      0   100%
+src/mentorhub/notificacoes/__init__.py          0      0   100%
+src/mentorhub/notificacoes/componente.py       29      0   100%
+src/mentorhub/notificacoes/excecoes.py          3      0   100%
+src/mentorhub/notificacoes/interfaces.py       12      0   100%
+src/mentorhub/persistencia/__init__.py          0      0   100%
+src/mentorhub/persistencia/interfaces.py       32      0   100%
+src/mentorhub/persistencia/memoria.py          63      0   100%
+src/mentorhub/textos.py                         6      0   100%
+-------------------------------------------------------------------------
+TOTAL                                         707     22    97%
+============================= 149 passed in 1.10s ==============================

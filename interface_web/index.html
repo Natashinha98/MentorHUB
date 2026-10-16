@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MentorHub</title>
+<style>
+  :root {
+    --bg: #f4f6fb; --card: #ffffff; --texto: #1c2333; --suave: #6b7488; --linha: #e1e5ef;
+    --marca: #4f46e5; --marca-clara: #eef0ff;
+    --ok: #15803d; --ok-bg: #e7f6ec; --erro: #b91c1c; --erro-bg: #fdeaea; --aviso: #a16207; --aviso-bg: #fdf4d8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1420; --card: #181f31; --texto: #e8ecf6; --suave: #9aa4bd; --linha: #2a3350;
+      --marca: #818cf8; --marca-clara: #232a4d;
+      --ok: #4ade80; --ok-bg: #12301f; --erro: #f87171; --erro-bg: #3a1618; --aviso: #facc15; --aviso-bg: #3a2f0e;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--texto); font: 16px/1.45 system-ui, "Segoe UI", Roboto, sans-serif; }
+  button { font: inherit; cursor: pointer; border-radius: 8px; border: 1px solid var(--linha); background: var(--card); color: var(--texto); padding: 7px 14px; }
+  button:hover { border-color: var(--marca); }
+  button.primario { background: var(--marca); border-color: var(--marca); color: #fff; font-weight: 600; padding: 10px 18px; }
+  button.primario:disabled { opacity: .45; cursor: not-allowed; }
+
+  main { display: grid; grid-template-columns: minmax(0, 1fr); max-width: 960px; margin: 0 auto; gap: 16px; padding: 24px 24px 32px; }
+  .coluna { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  section, .cartao { background: var(--card); border: 1px solid var(--linha); border-radius: 14px; padding: 16px; }
+  section h2 { margin: 0 0 4px; font-size: 17px; }
+  h3 { margin: 0 0 6px; font-size: 15px; }
+  .sub { color: var(--suave); font-size: 13px; margin: 0 0 12px; }
+  label { display: block; font-size: 13px; color: var(--suave); margin: 10px 0 4px; }
+  input, select, textarea { width: 100%; font: inherit; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--linha); background: var(--bg); color: var(--texto); }
+  textarea { resize: vertical; min-height: 60px; }
+
+  .abas { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .abas button { border-radius: 999px; padding: 8px 18px; font-weight: 600; }
+  .abas button.ativa { background: var(--marca); border-color: var(--marca); color: #fff; }
+  .abas button.travada { opacity: .5; }
+  .subabas { display: flex; gap: 4px; margin-bottom: 8px; border-bottom: 1px solid var(--linha); }
+  .subabas button { border: 0; border-bottom: 3px solid transparent; border-radius: 0; background: none; padding: 8px 12px; color: var(--suave); }
+  .subabas button.ativa { border-bottom-color: var(--marca); color: var(--texto); font-weight: 600; }
+
+  .caixa { border-radius: 8px; padding: 8px 12px; font-size: 14px; margin-top: 10px; }
+  .caixa.erro { background: var(--erro-bg); color: var(--erro); }
+  .caixa.ok { background: var(--ok-bg); color: var(--ok); }
+  .caixa.aviso { background: var(--aviso-bg); color: var(--aviso); }
+  .caixa ul { margin: 4px 0 0; padding-left: 20px; }
+  .contas { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+  .contas button { font-size: 13px; padding: 5px 10px; border-radius: 999px; }
+
+  .tag { display: inline-block; font-size: 12px; border-radius: 6px; padding: 1px 8px; background: var(--marca-clara); color: var(--marca); margin: 2px 4px 2px 0; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .chips button { font-size: 13px; padding: 4px 12px; border-radius: 999px; }
+  .busca-linha { display: flex; gap: 8px; }
+  .busca-linha input { flex: 1; }
+  .resultados { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-top: 14px; }
+  .mentor { display: flex; gap: 12px; border: 1px solid var(--linha); border-radius: 12px; padding: 12px; background: var(--bg); }
+  .mentor.escolhido { border-color: var(--marca); box-shadow: 0 0 0 2px var(--marca-clara); }
+  .mentor img, .perfil img { width: 56px; height: 56px; border-radius: 50%; flex: none; background: var(--linha); }
+  .mentor b { display: block; }
+  .nota { color: var(--aviso); font-weight: 600; font-size: 14px; }
+  .nota small { color: var(--suave); font-weight: 400; }
+  .perfil { margin-top: 16px; border-top: 1px solid var(--linha); padding-top: 14px; }
+  .perfil .topo { display: flex; gap: 14px; align-items: center; }
+  .perfil img { width: 84px; height: 84px; }
+  .perfil h3 { font-size: 19px; margin: 0; }
+  .avaliacao { border-left: 3px solid var(--aviso); padding: 4px 10px; margin-top: 8px; font-size: 14px; }
+  .avaliacao small { color: var(--suave); }
+
+  .acao { margin-top: 14px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+  .vazio { color: var(--suave); font-size: 14px; padding: 8px 0; }
+
+  #aviso { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%) translateY(30px); opacity: 0; transition: .25s; padding: 12px 20px; border-radius: 10px; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,.25); max-width: 90vw; z-index: 10; color: #fff; pointer-events: none; }
+  #aviso.vis { opacity: 1; transform: translateX(-50%); }
+  #aviso.ok { background: #15803d; }
+  #aviso.erro { background: #b91c1c; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <div class="coluna">
+    <nav class="abas" id="abas">
+      <button data-aba="conta">1. Conta</button>
+      <button data-aba="busca">2. Buscar mentores</button>
+    </nav>
+
+    <!-- ============ CONTA ============ -->
+    <section id="aba-conta" hidden>
+      <div id="conta-logado" hidden>
+        <h2>Sua conta</h2>
+        <p class="sub">Você está autenticado pelo componente de Autenticação.</p>
+        <div id="dadosConta"></div>
+        <div class="acao"><button id="btnSair">Sair</button></div>
+      </div>
+
+      <div id="conta-visitante">
+        <div class="subabas" id="subabas">
+          <button data-sub="entrar">Entrar</button>
+          <button data-sub="criar">Criar conta</button>
+          <button data-sub="esqueci">Esqueci a senha</button>
+        </div>
+
+        <form id="form-entrar" autocomplete="off">
+          <p class="sub">Operação <code>IAutenticacao.autenticar_usuario</code></p>
+          <label for="eEmail">E-mail</label><input id="eEmail" type="text" required>
+          <label for="eSenha">Senha</label><input id="eSenha" type="password" required>
+          <div class="acao"><button class="primario" type="submit">Entrar</button></div>
+          <div id="erroEntrar" class="caixa erro" hidden></div>
+          <label>Contas de teste (senha <b>senha1234</b>)</label>
+          <div class="contas" id="contasTeste"></div>
+        </form>
+
+        <form id="form-criar" hidden autocomplete="off">
+          <p class="sub">Operações <code>validar_cadastro</code> e <code>criar_conta</code></p>
+          <label for="cNome">Nome</label><input id="cNome" type="text">
+          <label for="cEmail">E-mail</label><input id="cEmail" type="text">
+          <label for="cSenha">Senha (8 ou mais caracteres, com letras e números)</label><input id="cSenha" type="password">
+          <label for="cPapel">Eu sou</label>
+          <select id="cPapel"><option value="mentorado">Mentorado</option><option value="mentor">Mentor</option></select>
+          <div id="camposMentor" hidden>
+            <label for="cArea">Áreas de conhecimento (separadas por vírgula)</label><input id="cArea" type="text" placeholder="Python, Dados">
+            <label for="cBio">Sobre você</label><textarea id="cBio"></textarea>
+          </div>
+          <div class="acao"><button class="primario" type="submit">Criar conta</button></div>
+          <div id="erroCriar" class="caixa erro" hidden></div>
+          <div id="okCriar" class="caixa ok" hidden></div>
+        </form>
+
+        <div id="form-esqueci" hidden>
+          <p class="sub">Operações <code>recuperar_acesso</code> e <code>redefinir_senha</code></p>
+          <form id="form-recuperar" autocomplete="off">
+            <label for="rEmail">E-mail da conta</label><input id="rEmail" type="text">
+            <div class="acao"><button class="primario" type="submit">Gerar código de recuperação</button></div>
+          </form>
+          <div id="codigoGerado" class="caixa aviso" hidden></div>
+          <form id="form-redefinir" hidden autocomplete="off">
+            <label for="rCodigo">Código recebido</label><input id="rCodigo" type="text" inputmode="numeric">
+            <label for="rSenha">Nova senha</label><input id="rSenha" type="password">
+            <div class="acao"><button class="primario" type="submit">Redefinir senha</button></div>
+          </form>
+          <div id="erroEsqueci" class="caixa erro" hidden></div>
+          <div id="okEsqueci" class="caixa ok" hidden></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ BUSCA ============ -->
+    <section id="aba-busca" hidden>
+      <h2>Buscar mentores</h2>
+      <p class="sub">Operações <code>IBuscaMentores.pesquisar_mentores</code> e <code>consultar_perfil</code></p>
+      <form id="form-busca" class="busca-linha" autocomplete="off">
+        <input id="bArea" type="text" placeholder="Área de conhecimento (ex.: Python)">
+        <button class="primario" type="submit">Pesquisar</button>
+      </form>
+      <div class="chips" id="chipsAreas"></div>
+      <div id="erroBusca" class="caixa erro" hidden></div>
+      <div id="resultados" class="resultados"></div>
+      <div id="semResultado" class="vazio" hidden>Nenhum mentor encontrado nessa área.</div>
+      <div id="perfil" class="perfil" hidden></div>
+    </section>
+
+  </div>
+
+</main>
+
+<div id="aviso" role="status"></div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+let E = null;                                  // último estado vindo do servidor
+let U = null;                                  // usuário logado (ou null)
+let aba = "conta", sub = "entrar";
+let busca = { resultados: null, perfil: null };
+
+const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const mostrar = (el, texto, html) => { el.hidden = !texto && !html; if (html) el.innerHTML = html; else el.textContent = texto || ""; };
+
+async function chamar(url, corpo) {
+  const r = await fetch(url, corpo ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(corpo) } : undefined);
+  return r.json();
+}
+
+let timerAviso;
+function avisar(texto, tipo) {
+  const el = $("#aviso");
+  el.textContent = texto; el.className = "vis " + tipo;
+  clearTimeout(timerAviso);
+  timerAviso = setTimeout(() => (el.className = ""), 4200);
+}
+
+function aplicar(resp, { silencioso = false } = {}) {
+  if (!silencioso) {
+    if (resp.erro) avisar((resp.erro.detalhes || []).length ? "Confira os dados do formulário." : resp.erro.tipo + ": " + resp.erro.mensagem, "erro");
+    else if (resp.mensagem) avisar(resp.mensagem, "ok");
+  }
+  E = resp.estado;
+  U = E.usuario;
+  if (!U && aba !== "conta") aba = "conta";
+  render();
+}
+
+// ============================================================== desenho
+function render() {
+  renderAbas(); renderConta(); renderBusca();
+}
+
+function renderAbas() {
+  document.querySelectorAll("#abas button").forEach((b) => {
+    b.classList.toggle("ativa", b.dataset.aba === aba);
+    b.classList.toggle("travada", !U && b.dataset.aba !== "conta");
+  });
+  for (const nome of ["conta", "busca"]) $("#aba-" + nome).hidden = aba !== nome;
+}
+
+function renderConta() {
+  $("#conta-logado").hidden = !U;
+  $("#conta-visitante").hidden = !!U;
+  if (U) {
+    $("#dadosConta").innerHTML = `<div class="cartao" style="background:var(--bg)"><b>${esc(U.nome)}</b><br>${esc(U.email)}<br><span class="tag">${esc(U.papel)}</span></div>`;
+    return;
+  }
+  document.querySelectorAll("#subabas button").forEach((b) => b.classList.toggle("ativa", b.dataset.sub === sub));
+  $("#form-entrar").hidden = sub !== "entrar";
+  $("#form-criar").hidden = sub !== "criar";
+  $("#form-esqueci").hidden = sub !== "esqueci";
+  $("#contasTeste").innerHTML = E.contas_teste.map((c, i) =>
+    `<button type="button" data-conta="${i}">${esc(c.nome.split(" ")[0])} · ${esc(c.papel)}</button>`).join("");
+}
+
+function estrelas(n, total) {
+  return total ? `<span class="nota">★ ${n.toFixed(1)} <small>(${total} ${total > 1 ? "avaliações" : "avaliação"})</small></span>`
+               : `<span class="nota"><small>sem avaliações</small></span>`;
+}
+const tags = (areas) => areas.map((a) => `<span class="tag">${esc(a)}</span>`).join("");
+const foto = (m) => `<img alt="Foto de ${esc(m.nome)}" src="${m.foto || ""}">`;
+
+function renderBusca() {
+  $("#chipsAreas").innerHTML = E.areas_sugeridas.map((a) => `<button type="button" data-area="${esc(a)}">${esc(a)}</button>`).join("");
+  const res = busca.resultados;
+  $("#semResultado").hidden = !(res && res.length === 0);
+  $("#resultados").innerHTML = (res || []).map((m) => `
+    <div class="mentor ${busca.perfil && busca.perfil.id === m.id ? "escolhido" : ""}">
+      ${foto(m)}
+      <div><b>${esc(m.nome)}</b>${tags(m.areas)}<div>${estrelas(m.nota, m.total)}</div>
+      <button type="button" data-perfil="${m.id}" style="margin-top:6px">Ver perfil</button></div>
+    </div>`).join("");
+  const p = busca.perfil;
+  $("#perfil").hidden = !p;
+  if (p) {
+    $("#perfil").innerHTML = `
+      <div class="topo">${foto(p)}<div><h3>${esc(p.nome)}</h3>${tags(p.areas)}<div>${estrelas(p.nota, p.total)}</div></div></div>
+      <p>${esc(p.bio)}</p>
+      <h3>Avaliações</h3>
+      ${p.avaliacoes.length ? p.avaliacoes.map((a) => `<div class="avaliacao"><b>${"★".repeat(a.nota)}</b> ${esc(a.comentario)}<br><small>${esc(a.autor)}</small></div>`).join("") : `<div class="vazio">Este mentor ainda não recebeu avaliações.</div>`}
+`;
+  }
+}
+
+// ============================================================== ações
+function erroEmCaixa(el, resp) {
+  if (!resp.erro) return mostrar(el, "");
+  const d = resp.erro.detalhes || [];
+  mostrar(el, null, d.length ? `<b>Corrija:</b><ul>${d.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : esc(resp.erro.mensagem));
+}
+
+$("#abas").addEventListener("click", (ev) => {
+  const b = ev.target.closest("[data-aba]"); if (!b) return;
+  if (!U && b.dataset.aba !== "conta") { avisar("Entre na sua conta para usar essa parte.", "erro"); return; }
+  aba = b.dataset.aba; renderAbas();
+});
+$("#subabas").addEventListener("click", (ev) => { const b = ev.target.closest("[data-sub]"); if (b) { sub = b.dataset.sub; renderConta(); } });
+$("#contasTeste").addEventListener("click", (ev) => {
+  const b = ev.target.closest("[data-conta]"); if (!b) return;
+  const c = E.contas_teste[+b.dataset.conta];
+  $("#eEmail").value = c.email; $("#eSenha").value = c.senha;
+});
+
+$("#form-entrar").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  const resp = await chamar("/api/entrar", { email: $("#eEmail").value, senha: $("#eSenha").value });
+  erroEmCaixa($("#erroEntrar"), resp);
+  if (resp.ok) { $("#eSenha").value = ""; aba = "busca"; busca = { resultados: null, perfil: null }; }
+  aplicar(resp);
+});
+$("#btnSair").addEventListener("click", async () => { busca = { resultados: null, perfil: null }; aplicar(await chamar("/api/sair", {})); });
+
+$("#cPapel").addEventListener("change", (ev) => { $("#camposMentor").hidden = ev.target.value !== "mentor"; });
+$("#form-criar").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  const resp = await chamar("/api/cadastrar", {
+    nome: $("#cNome").value, email: $("#cEmail").value, senha: $("#cSenha").value,
+    papel: $("#cPapel").value, area: $("#cArea").value, bio: $("#cBio").value,
+  });
+  erroEmCaixa($("#erroCriar"), resp);
+  mostrar($("#okCriar"), resp.ok ? "Conta criada. Entre com o e-mail e a senha que você cadastrou." : "");
+  if (resp.ok) { $("#eEmail").value = $("#cEmail").value; $("#cSenha").value = ""; sub = "entrar"; }
+  aplicar(resp);
+});
+
+$("#form-recuperar").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  const resp = await chamar("/api/recuperar", { email: $("#rEmail").value });
+  erroEmCaixa($("#erroEsqueci"), resp); mostrar($("#okEsqueci"), "");
+  mostrar($("#codigoGerado"), null, resp.ok
+    ? `Código: <b>${esc(resp.dados.codigo)}</b> (vale até ${esc(resp.dados.expira_em)}). Em produção ele chegaria por e-mail; a Autenticação só gera o código, e aqui ele aparece na tela.` : "");
+  $("#form-redefinir").hidden = !resp.ok;
+  aplicar(resp);
+});
+$("#form-redefinir").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  const resp = await chamar("/api/redefinir", { email: $("#rEmail").value, codigo: $("#rCodigo").value, nova_senha: $("#rSenha").value });
+  erroEmCaixa($("#erroEsqueci"), resp);
+  mostrar($("#okEsqueci"), resp.ok ? "Senha alterada. Volte na aba Entrar e use a senha nova." : "");
+  if (resp.ok) { $("#form-redefinir").hidden = true; $("#codigoGerado").hidden = true; $("#rSenha").value = ""; $("#rCodigo").value = ""; $("#eEmail").value = $("#rEmail").value; }
+  aplicar(resp);
+});
+
+async function pesquisar(area) {
+  $("#bArea").value = area;
+  const resp = await chamar("/api/pesquisar", { area });
+  erroEmCaixa($("#erroBusca"), resp);
+  busca = { resultados: resp.ok ? resp.dados.resultados : busca.resultados, perfil: null };
+  aplicar(resp, { silencioso: true });
+}
+$("#form-busca").addEventListener("submit", (ev) => { ev.preventDefault(); pesquisar($("#bArea").value); });
+$("#chipsAreas").addEventListener("click", (ev) => { const b = ev.target.closest("[data-area]"); if (b) pesquisar(b.dataset.area); });
+$("#resultados").addEventListener("click", async (ev) => {
+  const b = ev.target.closest("[data-perfil]"); if (!b) return;
+  const resp = await chamar("/api/perfil", { perfil_id: b.dataset.perfil });
+  if (resp.ok) busca.perfil = resp.dados.perfil;
+  aplicar(resp);
+  if (resp.ok) $("#perfil").scrollIntoView({ behavior: "smooth", block: "nearest" });
+});
+(async () => { aplicar(await chamar("/api/estado"), { silencioso: true }); })();
+</script>
+</body>
+</html>

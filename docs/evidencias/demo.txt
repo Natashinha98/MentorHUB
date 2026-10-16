@@ -1,0 +1,29 @@
+
+=== 1. Verificar disponibilidade da mentora Ana em 10/01/2030 ===
+  horários livres: ['10:00', '11:00']
+
+=== 2. Agendar sessão às 10:00 (Bruno com Ana) ===
+    [e-mail simulado] para=ana@mentorhub.com | MentorHub - Sessão de mentoria confirmada | Sua sessão de mentoria (código b76c3143-60ac-4544-8c87-e11eae2ea062) foi confirmada para 10/01/2030 às 10:00.
+    [e-mail simulado] para=bruno@mentorhub.com | MentorHub - Sessão de mentoria confirmada | Sua sessão de mentoria (código b76c3143-60ac-4544-8c87-e11eae2ea062) foi confirmada para 10/01/2030 às 10:00.
+  sessão b76c3143-60ac-4544-8c87-e11eae2ea062 criada, status = marcada
+  horários livres: ['11:00']
+
+=== 3. Tentar agendar o mesmo horário de novo ===
+  recusado: HorarioIndisponivel: O horário 10/01/2030 10:00 não está livre para o mentor m1.
+
+=== 4. Cancelar a sessão ===
+    [e-mail simulado] para=ana@mentorhub.com | MentorHub - Sessão de mentoria cancelada | A sessão de mentoria (código b76c3143-60ac-4544-8c87-e11eae2ea062) que estava marcada para 10/01/2030 às 10:00 foi cancelada.
+    [e-mail simulado] para=bruno@mentorhub.com | MentorHub - Sessão de mentoria cancelada | A sessão de mentoria (código b76c3143-60ac-4544-8c87-e11eae2ea062) que estava marcada para 10/01/2030 às 10:00 foi cancelada.
+  sessão b76c3143-60ac-4544-8c87-e11eae2ea062, status = cancelada
+  horários livres: ['10:00', '11:00']
+
+=== 5. Cancelar de novo (não pode) ===
+  recusado: CancelamentoNaoPermitido: A sessão b76c3143-60ac-4544-8c87-e11eae2ea062 já está cancelada.
+
+=== 6. Serviço de e-mail fora do ar: o agendamento continua valendo ===
+  [log WARNING] Aviso da sessão df4f8b39-7e8b-4c69-a840-994ebac3d187 não foi entregue a todos: ana@mentorhub.com: serviço de e-mail indisponível; bruno@mentorhub.com: serviço de e-mail indisponível
+  sessão df4f8b39-7e8b-4c69-a840-994ebac3d187 criada mesmo assim, status = marcada
+  horários livres: ['10:00']
+
+=== Resumo ===
+  e-mails entregues pelo serviço simulado: 4
