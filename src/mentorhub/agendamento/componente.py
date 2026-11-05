@@ -90,9 +90,15 @@ class ComponenteAgendamento(IAgendamento):
         if sessao.horario <= self._agora():
             raise CancelamentoNaoPermitido(f"A sessão {sessao_id} já aconteceu.")
 
-        sessao.status = StatusSessao.CANCELADA
-        self._persistencia.salvar_sessao(sessao)
+        # Devolve o horário primeiro: se a agenda falhar aqui, nada mudou.
         self._persistencia.liberar_horario(sessao.mentor_id, sessao.horario)
+        sessao.status = StatusSessao.CANCELADA
+        try:
+            self._persistencia.salvar_sessao(sessao)
+        except Exception:
+            # Não deixa o horário livre se o cancelamento não foi salvo.
+            self._persistencia.ocupar_horario(sessao.mentor_id, sessao.horario)
+            raise
 
         self._avisar(sessao, self._notificacao.enviar_notificacao_cancelamento)
         return sessao
