@@ -185,3 +185,83 @@ o perfil do mentor. Prints em `docs/evidencias/interface_*.png`.
 - A Autenticação não guarda sessão de login: ela só confere a senha. Quem guarda "quem está
   logado" é a tela, e só um usuário por vez (é uma demonstração local)
 - Não sai e-mail de verdade: o código de recuperação aparece na tela
+
+## Serviço de Sessões de Mentoria (LAB07, SOA)
+
+Serviço do Bounded Context **Agendamento de Mentorias**, exposto como API REST sobre
+HTTP com JSON. Implementa as três operações do contrato:
+
+| Operação do contrato | Rota | Sucesso |
+|---|---|---|
+| `agendarSessao()` | `POST /sessoes` | 201 com a sessão marcada |
+| `consultarSessao()` | `GET /sessoes/{sessaoId}` | 200 com os dados da sessão |
+| `cancelarSessao()` | `POST /sessoes/{sessaoId}/cancelamento` | 200 com a sessão cancelada |
+
+Rota de apoio para os testes (Serviço de Disponibilidade, simulado):
+`GET /mentores/{mentorId}/disponibilidade?data=AAAA-MM-DD`.
+
+Corpo de `POST /sessoes`:
+
+```json
+{ "mentorId": "m1", "mentoradoId": "a1", "horario": "2026-11-10T14:00:00" }
+```
+
+### Erros
+
+Todo erro responde em JSON no formato `{"codigo": "...", "mensagem": "..."}`.
+
+| HTTP | Código | Quando |
+|---|---|---|
+| 400 | `DADOS_INVALIDOS` | falta algum campo, formato inválido ou horário que já passou |
+| 404 | `MENTOR_NAO_ENCONTRADO` | o identificador não corresponde a um mentor |
+| 404 | `MENTORADO_NAO_ENCONTRADO` | o identificador não corresponde a um mentorado |
+| 404 | `SESSAO_NAO_ENCONTRADA` | não existe sessão com o identificador informado |
+| 409 | `HORARIO_INDISPONIVEL` | horário fora da agenda do mentor ou já reservado |
+| 409 | `CANCELAMENTO_NAO_PERMITIDO` | sessão já cancelada ou que já aconteceu |
+| 503 | `AGENDA_INDISPONIVEL` | não foi possível reservar ou liberar o horário na agenda |
+
+Uma falha no envio do e-mail de aviso não desfaz o agendamento nem o cancelamento:
+o problema só vai para o log.
+
+### Tecnologias
+
+- **FastAPI** para a API REST e a documentação interativa (Swagger UI)
+- **Uvicorn** como servidor HTTP
+- **pytest** + **TestClient** (httpx) para os testes da API
+
+### Como executar
+
+```bash
+pip install -r requirements.txt
+python servidor_api.py              # Swagger UI em http://localhost:8000/docs
+python servidor_api.py --porta 8080 # se a 8000 estiver ocupada
+```
+
+A API sobe com dados de exemplo em memória: mentores `m1` (Ana) e `m2` (Carlos),
+mentorados `a1` (Bruno) e `a2` (Carla), e horários livres às 10:00, 14:00 e 16:00
+nos próximos 7 dias. Os e-mails de aviso são simulados e aparecem no terminal.
+
+### Onde está o código
+
+```
+src/mentorhub/servico_sessoes/
+├── servico.py     # regras do contrato (agendar, cancelar, consultar)
+├── api.py         # rotas REST, esquemas JSON e tradução de erros para HTTP
+├── excecoes.py    # um erro para cada condição de falha do contrato
+└── app.py         # monta o serviço com as implementações em memória
+servidor_api.py    # sobe a API com o Uvicorn
+```
+
+O serviço usa o componente de Agendamento (regras de agenda) e conhece só as
+interfaces `IAgendamento` e `IPersistencia`; quem liga as implementações é o `app.py`.
+
+### Testes e evidências
+
+- `tests/test_api_sessoes.py`: 31 testes da API (sucesso de cada operação e cada erro
+  do contrato, incluindo agenda fora do ar e falha no e-mail).
+- `docs/evidencias/servico_sessoes/resultado_testes.txt`: saída da suíte completa
+  (180 testes) com cobertura.
+- `docs/evidencias/servico_sessoes/requisicoes_api.md`: 15 chamadas HTTP reais à API
+  rodando, com requisição e resposta.
+- `docs/evidencias/servico_sessoes/swagger_*.png`: Swagger UI com as operações e
+  execuções de `POST /sessoes` (201 e 409).
